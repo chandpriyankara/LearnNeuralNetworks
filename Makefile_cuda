@@ -1,0 +1,93 @@
+# Makefile for CUDA Neural Network Multiplication Example
+# ======================================================
+
+# Compiler and flags
+NVCC = nvcc
+CXX = g++
+
+# CUDA flags  
+CUDA_FLAGS = -O3 -std=c++20 -arch=sm_50 -Xcompiler "-fPIC -fno-strict-aliasing"
+CUDA_INCLUDES = -I/usr/local/cuda/include
+CUDA_LIBS = -L/usr/local/cuda/lib64 -lcudart -lcurand
+
+# C++ flags
+CXX_FLAGS = -O3 -std=c++20 -Wall -Wextra
+
+# Targets
+CPU_TARGET = neural_network_multiplication
+GPU_TARGET = neural_network_multiplication_cuda
+BENCHMARK_TARGET = benchmark_cpu_gpu
+
+# Source files
+CPU_SRC = neural_network_multiplication.cpp
+GPU_SRC = neural_network_multiplication_cuda.cu
+BENCHMARK_SRC = benchmark_cpu_gpu.cpp
+
+# Default target
+all: $(CPU_TARGET) $(GPU_TARGET)
+
+# CPU version
+$(CPU_TARGET): $(CPU_SRC)
+	$(CXX) $(CXX_FLAGS) -o $@ $<
+
+# GPU version
+$(GPU_TARGET): $(GPU_SRC)
+	$(NVCC) $(CUDA_FLAGS) $(CUDA_INCLUDES) -o $@ $< $(CUDA_LIBS)
+
+# Benchmark comparison
+$(BENCHMARK_TARGET): $(BENCHMARK_SRC)
+	$(CXX) $(CXX_FLAGS) -o $@ $<
+
+# Clean
+clean:
+	rm -f $(CPU_TARGET) $(GPU_TARGET) $(BENCHMARK_TARGET) *.o
+
+# Install CUDA dependencies (Ubuntu/Debian)
+install-cuda:
+	sudo apt update
+	sudo apt install nvidia-cuda-toolkit
+	sudo apt install nvidia-cuda-dev
+
+# Check CUDA installation
+check-cuda:
+	@echo "Checking CUDA installation..."
+	@nvcc --version
+	@nvidia-smi
+
+# Run CPU version
+run-cpu: $(CPU_TARGET)
+	./$(CPU_TARGET)
+
+# Run GPU version
+run-gpu: $(GPU_TARGET)
+	./$(GPU_TARGET)
+
+# Run benchmark
+run-benchmark: $(BENCHMARK_TARGET)
+	./$(BENCHMARK_TARGET)
+
+# Performance test
+perf-test: $(CPU_TARGET) $(GPU_TARGET)
+	@echo "Running CPU version..."
+	@time ./$(CPU_TARGET) > cpu_results.txt 2>&1
+	@echo "Running GPU version..."
+	@time ./$(GPU_TARGET) > gpu_results.txt 2>&1
+	@echo "Results saved to cpu_results.txt and gpu_results.txt"
+
+# Help
+help:
+	@echo "Available targets:"
+	@echo "  all          - Build both CPU and GPU versions"
+	@echo "  $(CPU_TARGET) - Build CPU version only"
+	@echo "  $(GPU_TARGET) - Build GPU version only"
+	@echo "  $(BENCHMARK_TARGET) - Build benchmark comparison"
+	@echo "  clean        - Remove all built files"
+	@echo "  install-cuda - Install CUDA toolkit (Ubuntu/Debian)"
+	@echo "  check-cuda   - Check CUDA installation"
+	@echo "  run-cpu      - Run CPU version"
+	@echo "  run-gpu      - Run GPU version"
+	@echo "  run-benchmark - Run benchmark comparison"
+	@echo "  perf-test    - Run performance comparison"
+	@echo "  help         - Show this help message"
+
+.PHONY: all clean install-cuda check-cuda run-cpu run-gpu run-benchmark perf-test help

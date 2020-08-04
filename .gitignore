@@ -1,0 +1,76 @@
+# Compiled executables
+neural_network_multiplication
+neural_network_cuda
+benchmark_cpu_gpu
+*.exe
+*.out
+
+# Build artifacts
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+
+# CUDA compiled files
+*.fatbin
+*.ptx
+
+# Results/output files
+*.txt
+neural_network_results.txt
+improved_neural_network_results.txt
+benchmark_results.txt
+unified_neural_network_results.txt
+
+# IDE files
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Backup files
+*.bak
+*.orig
+*.rej
+
+# Log files
+*.log
+
+# Python cache (if any)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env
